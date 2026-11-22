@@ -1,135 +1,173 @@
 # GitHub Repository Quality Analyzer
 
-A Streamlit dashboard that analyzes any public GitHub repository using the GitHub REST API. It reports repository details, programming language distribution and the presence of key project files, then explains what is missing and exports the findings as a Markdown report.
+A Python-based web application built with Streamlit that analyzes public GitHub repositories using the GitHub REST API. It displays repository information, programming language statistics, project structure checks, and suggestions for improving repository organization.
 
-All data comes from live API responses. Nothing is hardcoded or simulated.
+## Overview
+
+The GitHub Repository Quality Analyzer helps developers review the basic organization of a public GitHub repository. It checks for important project files and provides a downloadable Markdown report containing the analysis results.
 
 ## Features
 
-- Validates GitHub repository URLs (supports `.git` suffixes, trailing slashes, `/tree/...` paths and `www.`).
-- Shows name, description, owner, creation date, last updated date, stars, forks, open issues and size.
-- Shows language percentages with a bar chart and a data table.
-- Checks for six recommended items and marks each as Found or Not found, with the evidence used:
+- **Repository Information:** Displays repository name, description, owner, creation date, last updated date, stars, forks, open issues, and repository size.
+- **Programming Language Analysis:** Displays the programming languages used in a repository with percentages, charts, and a data table.
+- **Project Structure Checks:** Checks for six recommended repository components:
   - README file
-  - Dependency or configuration file (`requirements.txt`, `pyproject.toml`, `package.json`, `pom.xml`, `Cargo.toml`, `go.mod` and others)
-  - Test directory (`test`, `tests`, `spec`, `__tests__`)
-  - License file
+  - Dependency or configuration file
+  - Test directory
+  - LICENSE file
   - `.gitignore` file
-  - GitHub Actions workflow (`.yml` or `.yaml` in `.github/workflows`)
-- Explains why each missing item matters and suggests how to fix it.
-- Downloads a Markdown report.
-- Handles invalid URLs, private or missing repositories, rate limits, network failures, empty repositories and missing descriptions.
-- Optional GitHub token field in the sidebar to raise the rate limit.
+  - GitHub Actions workflow
+- **Improvement Suggestions:** Identifies missing components and explains why they are useful.
+- **Markdown Report:** Generates a downloadable report containing the analysis results.
+- **URL Validation:** Handles invalid GitHub URLs and supported URL formats.
+- **Error Handling:** Handles missing repositories, private repositories, API rate limits, network errors, and empty repositories.
+- **Optional GitHub Token:** Allows users to provide a GitHub personal access token to increase API rate limits.
 
-## Methodology
+## Technology Stack
 
-The analyzer is deliberately transparent and does not compute a quality score.
+| Technology | Purpose |
+|---|---|
+| Python | Main programming language |
+| Streamlit | Web application interface |
+| Requests | GitHub REST API communication |
+| Pandas | Data handling |
+| Altair | Language statistics visualization |
+| Pytest | Automated testing |
 
-- **Language share** = bytes of code for a language divided by the total bytes returned by GitHub's `/languages` endpoint.
-- **Structure checks** = a check is Found only if a matching file or directory name is returned by the API for the repository root (or `.github/workflows`).
-- **Summary** = "N of 6 recommended items found" plus the names of what was found and what was not.
+## Project Structure
 
-The tool checks repository organization. It does not read source code, measure code quality or measure test coverage.
-
-## Technology stack
-
-- Python 3.10 or newer
-- Streamlit (dashboard)
-- Requests (GitHub REST API)
-- Pandas and Altair (tables and chart)
-- Pytest (unit tests)
-
-## Project structure
-
-```
+```text
 github-repository-quality-analyzer/
-├── app.py                 Streamlit dashboard
-├── github_analyzer.py     API client, analysis logic, report generation
-├── requirements.txt
-├── README.md
-├── .gitignore
+│
 ├── .streamlit/
-│   └── config.toml        Lavender theme settings
-└── tests/
-    └── test_analyzer.py   Unit tests with mocked API responses
+│   └── config.toml
+│
+├── Screenshots/
+│   ├── dashboard.png
+│   ├── analysis-results-1.png
+│   └── analysis-results-2.png
+│
+├── .gitignore
+├── README.md
+├── app.py
+├── github_analyzer.py
+├── requirements.txt
+└── test_analyzer.py
 ```
 
-## Installation
+## Installation and Setup
+
+### 1. Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/github-repository-quality-analyzer.git
+git clone https://github.com/Sara-png-ops/github-repository-quality-analyzer.git
+```
+
+### 2. Open the project folder
+
+```bash
 cd github-repository-quality-analyzer
-
-python -m venv .venv
-
-# Windows (PowerShell)
-.venv\Scripts\Activate.ps1
-# Windows (Command Prompt)
-.venv\Scripts\activate.bat
-# macOS / Linux
-source .venv/bin/activate
-
-pip install -r requirements.txt
 ```
 
-If PowerShell blocks the activation script, run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once and try again.
-
-## VS Code setup
-
-1. Install [Python](https://www.python.org/downloads/) 3.10+ and [VS Code](https://code.visualstudio.com/).
-2. Install the **Python** extension by Microsoft.
-3. Select **File > Open Folder** and open `github-repository-quality-analyzer`.
-4. Open the integrated terminal with **Terminal > New Terminal** and create and activate the virtual environment as shown above.
-5. Press `Ctrl+Shift+P` (`Cmd+Shift+P` on macOS), choose **Python: Select Interpreter** and pick the one inside `.venv`.
-6. Run `pip install -r requirements.txt` in the terminal.
-
-## Running the app
+### 3. Create a virtual environment
 
 ```bash
-streamlit run app.py
+python -m venv .venv
 ```
 
-Streamlit prints a local address, normally `http://localhost:8501`, and opens it in your browser. Paste a public repository URL such as `https://github.com/psf/requests` and select **Analyze**.
+### 4. Activate the virtual environment
 
-### Rate limits and tokens
+For Windows PowerShell:
 
-Unauthenticated GitHub API requests are limited to 60 per hour, and each analysis uses 3 to 4 requests. If you reach the limit, create a [personal access token](https://github.com/settings/tokens) (no scopes are needed for public repositories) and paste it into the sidebar. The token is sent only to `api.github.com` and is not stored. Results are cached for five minutes to save requests.
+```powershell
+.venv\Scripts\Activate.ps1
+```
 
-## Running the tests
+If PowerShell blocks activation, run:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
+
+Then activate the environment again.
+
+### 5. Install dependencies
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+## Running the Application
+
+Start the Streamlit application using:
+
+```bash
+python -m streamlit run app.py
+```
+
+The application will open in your browser, usually at:
+
+`http://localhost:8501`
+
+Enter a public GitHub repository URL and click **Analyze Repository** to view the results.
+
+## Running the Tests
+
+Run the automated test suite using:
 
 ```bash
 python -m pytest -v
 ```
 
-The tests mock all GitHub responses, so they need no internet connection or token. They cover URL validation, API response handling, rate limits, network errors, empty repositories, missing descriptions, structure checks and report generation.
+The tests use mocked GitHub API responses to check URL validation, API response handling, error handling, repository structure checks, and report generation.
 
-## Screenshots
+## Application Screenshots
 
-Run the app, analyze a repository, then save screenshots into a `docs/screenshots/` folder and reference them here:
+### 1. Dashboard
 
-```markdown
-![Dashboard overview](docs/screenshots/overview.png)
-![Language chart](docs/screenshots/languages.png)
-![Structure checks](docs/screenshots/checks.png)
-```
+![Dashboard](Screenshots/dashboard.png)
+
+The main interface where users enter a public GitHub repository URL and start the analysis.
+
+### 2. Repository Analysis
+
+![Repository Analysis](Screenshots/analysis-results-1.png)
+
+Displays repository information and programming language statistics.
+
+### 3. Quality Checks and Recommendations
+
+![Quality Checks](Screenshots/analysis-results-2.png)
+
+Displays repository structure checks, missing components, and improvement suggestions.
+
+## Methodology
+
+The analyzer uses information retrieved from the GitHub REST API.
+
+- **Language Statistics:** Calculates the percentage of each programming language using the byte counts returned by GitHub.
+- **Structure Checks:** Searches for recommended files and directories in the repository root and GitHub Actions workflow directory.
+- **Analysis Summary:** Reports how many of the six recommended components were found and identifies missing components.
 
 ## Limitations
 
-- Checks look only at the repository root and `.github/workflows`. A test folder at `src/tests` or a `requirements.txt` inside a subfolder of a monorepo is not detected.
-- Detection is based on file and directory names. It does not confirm that a README is useful or that tests pass.
-- Language data comes from GitHub's linguist classification, which may exclude vendored or generated files.
-- GitHub includes open pull requests in the open issues count.
-- Only public repositories are supported.
-- Unauthenticated use is limited to 60 API requests per hour.
+- Only public GitHub repositories are supported.
+- The analyzer checks repository organization, not the actual quality or correctness of source code.
+- It does not measure code quality, security vulnerabilities, or test coverage.
+- Structure checks are based on file and directory names.
+- Files located in certain nested directories may not be detected.
+- Unauthenticated GitHub API requests have rate limits.
 
-## Future improvements
+## Future Improvements
 
-- Check common subdirectories such as `src/` for tests and dependency files.
-- Add commit activity and contributor statistics.
-- Compare two repositories side by side.
-- Export reports as PDF.
-- Add continuous integration that runs the test suite on every push.
+- Add checks for common nested project directories.
+- Include commit activity and contributor statistics.
+- Add side-by-side repository comparison.
+- Support PDF report generation.
+- Integrate automated testing through GitHub Actions.
 
-## License
+## Author
 
-Add a `LICENSE` file before publishing (the MIT License is a common choice for portfolio projects).
+**Sara Subhan**
+
+
